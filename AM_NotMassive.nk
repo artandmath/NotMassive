@@ -49,6 +49,7 @@ Group {
  addUserKnob {3 timeOffset l "Time offset range" t "Time offset each card.\n\nIf randomly offset the cards will be offset randomly in either direction from the current frame.\n\nIf stepping, cards will be offset in order by the step amount until the time offset has been reached. The next card has a zero offset and the steps begin again until the time offset is reached and so on."}
  addUserKnob {3 timeOffsetStep l " with step" t "step amount in frames" -STARTLINE}
  addUserKnob {6 timeOffsetRandomize l "Randomize time offset" t "Randomize time offset" +STARTLINE}
+ timeOffsetRandomize true
  addUserKnob {3 timeOffsetSeed l "with seed" t "seed for time offset" -STARTLINE +DISABLED}
  addUserKnob {6 mirror l "Randomly mirror" t "Randomly flop the cards" +STARTLINE}
  addUserKnob {3 mirrorSeed l "with seed" t "seed for random flop" -STARTLINE +DISABLED}
@@ -57,19 +58,23 @@ Group {
  addUserKnob {20 look l Look}
  addUserKnob {4 look_axis l "look axis" M {+Z -Z +Y -Y +X -X}}
  addUserKnob {6 look_rotate_x l "rotate X" -STARTLINE}
+ look_rotate_x true
  addUserKnob {6 look_rotate_y l "rotate Y" -STARTLINE}
+ look_rotate_y true
  addUserKnob {6 look_rotate_z l "rotate Z" -STARTLINE}
+ look_rotate_z true
  addUserKnob {7 look_strength l "look strength"}
+ look_strength 1
  addUserKnob {6 look_use_quaternions l "use quaternions" +STARTLINE}
  addUserKnob {1 vertexStore l INVISIBLE +INVISIBLE}
- addUserKnob {6 setKnobsToDefault l INVISIBLE +INVISIBLE +STARTLINE}
- setKnobsToDefault true
+ addUserKnob {1 setKnobsToDefault l INVISIBLE +INVISIBLE}
+ setKnobsToDefault True
 }
  BackdropNode {
   inputs 0
   name warningBackdrop
   tile_color 0x545454ff
-  label "MODIFYING OR DELETING\nTHESE NODES WILL BREAK\nCROWD CONTROL"
+  label "MODIFYING OR DELETING\nTHESE NODES WILL BREAK\nNOT MASSIVE"
   note_font_size 42
   xpos -719
   ypos -404
@@ -121,25 +126,6 @@ Group {
   ypos 2151
   addUserKnob {20 keepOnExecute l INVISIBLE +INVISIBLE}
  }
- StickyNote {
-  inputs 0
-  name autoGenNote2
-  label "some node labels won't refresh immediately if the\nsettings are changed in the parent group crontrols"
-  note_font Verdana
-  note_font_size 25
-  xpos -612
-  ypos 498
-  addUserKnob {20 keepOnExecute +INVISIBLE}
- }
- StickyNote {
-  inputs 0
-  name autoGenNote1
-  label "<l>AUTO GENERATED NODES>>>>\n\nNodes are deleted and regenerated\non executing \"Make Cards\" button"
-  note_font_size 50
-  xpos -703
-  ypos 253
-  addUserKnob {20 keepOnExecute +INVISIBLE}
- }
  Input {
   inputs 0
   name look
@@ -190,5 +176,25 @@ Group {
   xpos 290
   ypos -181
   number 3
+ }
+ StickyNote {
+  inputs 0
+  name autoGenNote2
+  label "some node labels won't refresh immediately if the\nsettings are changed in the parent group crontrols"
+  note_font Verdana
+  note_font_size 25
+  xpos -612
+  ypos 498
+  addUserKnob {20 keepOnExecute +INVISIBLE}
+ }
+ StickyNote {
+  inputs 0
+  name autoGenNote1
+  label "<l>AUTO GENERATED NODES>>>>\n\nNodes are deleted and regenerated\non executing \"Make Crowd\" button"
+  note_font_size 50
+  selected true
+  xpos -703
+  ypos 253
+  addUserKnob {20 keepOnExecute +INVISIBLE}
  }
 end_group
