@@ -5,3 +5,5 @@ Install AM_NotMassive.py in your ~/.nuke folder or a folder where nuke can impor
 Install AM_NotMassive.nk in toolsets or where ever.
 
 Make a crowd!
+
+![screenshot](https://raw.githubusercontent.com/artandmath/NotMassive/master/docs/NotMassive_Screenshot.jpg)
