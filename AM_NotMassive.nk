@@ -1,0 +1,191 @@
+set cut_paste_input [stack 0]
+version 10.5 v6
+push $cut_paste_input
+Group {
+ name NotMassive3
+ onCreate "group = nuke.thisNode()\ngroup\['displayPercentage'].setFlag(0x00000002)\ngroup\['displayPercentage'].setRange(0,100)\ngroup\['displayPercentOffset'].setFlag(0x00000002)\ngroup\['displayPercentOffset'].setRange(0,100)\n"
+ knobChanged "import AM_NotMassive as nm\n\nprint \"nm knobchanged\"\n\ngroup = nuke.thisNode()\nknob = nuke.thisKnob()\n\nprint 'Knob: %s set to: %s' % (knob.name(), knob.value())\n\nif knob.name() == 'inputChange':\n    nm.respondToInputChange (group)\nelse:\n    nm.respondToKnobChange (knob,group)\n\nprint \"nm knobchanged\\n\""
+ tile_color 0xff8b32ff
+ label "No Crowd"
+ note_font_size 18
+ selected true
+ xpos -8290
+ ypos -3283
+ addUserKnob {20 User}
+ addUserKnob {26 generateDivider l Generate}
+ addUserKnob {26 spacer1 l " " T " "}
+ addUserKnob {3 vertexStep l "Use every" t "Create a card at every Nth vertex"}
+ addUserKnob {3 startVertex l "Nth vertex starting at" t "The starting vertex. This will offset the vertices on which each card is created. For example, generating crowd on every 4th vertex starting at vertex 0 will produce a different result than generating a crowd on every 4th vertex starting at vertex 2" -STARTLINE}
+ addUserKnob {6 useSelection l "Use saved vertex selection" t "Use selected vertices. Vertices on the geo must be selected in the viewer first and saved." +STARTLINE}
+ addUserKnob {22 saveSelection l "save selection" t "Save the points selected in the viewport. \n\nWARNING: This could include the points of the cards of a previous crowd if the crowd is visible in the viewport and points on the cards are also selected.\n\nPoints are saved inside a hidden text knob in this group to be used when generating cards. \n\nFor loading the points, they are also saved in a  GeoSelect node inside the group" -STARTLINE +DISABLED T "import AM_NotMassive as nm\n\ngroup = nuke.thisNode()\n\nnm.saveSelectedVertices(group)"}
+ addUserKnob {22 restoreSelection l "restore selection" t "Restore the saved selected vertices and select them in the viewpoint." -STARTLINE +DISABLED T "import AM_NotMassive as nm\n\ngroup = nuke.thisNode()\n\nnm.restoreSelectedVertices(group)"}
+ addUserKnob {6 vertexRandom l "Randomize vertices" t "Step randomly between every Nth frame" +STARTLINE}
+ addUserKnob {3 vertexSeed l "with seed" t "seed for the random step" -STARTLINE +DISABLED}
+ addUserKnob {4 inputOrder l "Input order" t "Chose the image input for each card.\n\n<i>Step:</i> Step through image input. Updates live if selected\n\n<i>Random:</i> Randomly select each image input. Updates live if selected and on changing the seed.\n\n<i>Duplication Radius:</i> This tries not to choose the same image input within the duplication radius. Depends on whether there are enough image inputs to choose from. Requires cards to be regenerated if duplication radius is modified." M {Step Random "Duplication radius" "" "" "" "" "" "" "" ""}}
+ addUserKnob {3 inputSeed l "with seed" t "seed for the random input order" -STARTLINE +DISABLED +HIDDEN}
+ addUserKnob {7 duplicationRadius l "with radius" t "This tries not to choose the same image input within the duplication radius. Depends on whether there are enough image inputs to choose from. Requires cards to be regenerated if duplication radius is modified." +DISABLED +HIDDEN R 0 100}
+ addUserKnob {3 duplicationRadiusSeed l "and seed" t "seed for the dupliation radius" -STARTLINE +DISABLED +HIDDEN}
+ addUserKnob {22 makeCrowdBtn l "make crowd" t "Generate the crowd" T "import AM_NotMassive as nm\n\ngroup = nuke.thisNode()\n\nnm.makeCrowd(group)" +STARTLINE}
+ addUserKnob {26 btnDiv l "" -STARTLINE T "---- modify below ---->"}
+ addUserKnob {22 bakeCrowdBtn l "bake crowd" t "Creates a copy of the NotMassive group, removes any dynamic controls and bakes in all expressions as fixed values.\n\nYou might want to use this function if you need to extract anything out of the group and use it elsewhere.\n\nBreak out the oven tray, your favourite non-dairy butter substitute and get baking!\n" -STARTLINE T "import AM_NotMassive as nm\n\ngroup = nuke.thisNode()\n\nnm.bakeGroup(group)"}
+ addUserKnob {26 spacer2 l " " T " "}
+ addUserKnob {26 displayDivider l Display}
+ addUserKnob {26 spacer3 l " " T " "}
+ addUserKnob {3 displayPercentage l "Display percent in GUI" t "Display a percentage of the cards in GUI to speed up interactivity. If rendered via the command-line or on a render farm, all cards will render." R 0 100}
+ addUserKnob {3 displayPercentOffset l "Display percent offset" t "Cycle through the visible cards if displaying less that 100 percent of the cards in the nuke interface." R 0 100}
+ addUserKnob {3 randomColorSeed l "Random color seed" t "seed for the random color channel"}
+ addUserKnob {26 spacer4 l " " T " "}
+ addUserKnob {26 controlsDivider l "Card Controls"}
+ addUserKnob {26 spacer5 l " " T " "}
+ addUserKnob {7 pivotOffset l "Y offset" t "Change the Y-pivot on the cards. Set it to the position of the feet of the input characters" R -0.5 0.5}
+ addUserKnob {7 scale l Height t "Change the height of the cards" R 0 20}
+ addUserKnob {7 scaleVariation l "Height variation" t "Randomly vary the height of the cards"}
+ addUserKnob {3 scaleSeed l "with seed" t "seed for height variation" -STARTLINE}
+ addUserKnob {13 positionOffset l "Position offset" t "randomly offset each card to a maximum distance of the position offset"}
+ addUserKnob {3 positionOffsetSeed l "with seed" t "seed for the position offset" -STARTLINE}
+ addUserKnob {3 timeOffset l "Time offset range" t "Time offset each card.\n\nIf randomly offset the cards will be offset randomly in either direction from the current frame.\n\nIf stepping, cards will be offset in order by the step amount until the time offset has been reached. The next card has a zero offset and the steps begin again until the time offset is reached and so on."}
+ addUserKnob {3 timeOffsetStep l " with step" t "step amount in frames" -STARTLINE}
+ addUserKnob {6 timeOffsetRandomize l "Randomize time offset" t "Randomize time offset" +STARTLINE}
+ addUserKnob {3 timeOffsetSeed l "with seed" t "seed for time offset" -STARTLINE +DISABLED}
+ addUserKnob {6 mirror l "Randomly mirror" t "Randomly flop the cards" +STARTLINE}
+ addUserKnob {3 mirrorSeed l "with seed" t "seed for random flop" -STARTLINE +DISABLED}
+ addUserKnob {26 divInfo l "" +STARTLINE}
+ addUserKnob {26 versionInfo l "" +STARTLINE T "\"I can't believe it's not Massive!\"\n\n@darkness v0.1 2018-02-25"}
+ addUserKnob {20 look l Look}
+ addUserKnob {4 look_axis l "look axis" M {+Z -Z +Y -Y +X -X}}
+ addUserKnob {6 look_rotate_x l "rotate X" -STARTLINE}
+ addUserKnob {6 look_rotate_y l "rotate Y" -STARTLINE}
+ addUserKnob {6 look_rotate_z l "rotate Z" -STARTLINE}
+ addUserKnob {7 look_strength l "look strength"}
+ addUserKnob {6 look_use_quaternions l "use quaternions" +STARTLINE}
+ addUserKnob {1 vertexStore l INVISIBLE +INVISIBLE}
+ addUserKnob {6 setKnobsToDefault l INVISIBLE +INVISIBLE +STARTLINE}
+ setKnobsToDefault true
+}
+ BackdropNode {
+  inputs 0
+  name warningBackdrop
+  tile_color 0x545454ff
+  label "MODIFYING OR DELETING\nTHESE NODES WILL BREAK\nCROWD CONTROL"
+  note_font_size 42
+  xpos -719
+  ypos -404
+  bdwidth 559
+  bdheight 2680
+  addUserKnob {20 keepOnExecute l INVISIBLE +INVISIBLE}
+ }
+ Input {
+  inputs 0
+  name emit
+  label "input \[value number]"
+  xpos -590
+  ypos 1859
+  addUserKnob {20 keepOnExecute l INVISIBLE +INVISIBLE}
+  addUserKnob {26 keepOnBake l INVISIBLE +INVISIBLE}
+ }
+ GeoSelect {
+  geo {  }
+  name EmitterGeoSelectIn
+  xpos -590
+  ypos 1911
+  addUserKnob {20 keepOnExecute +INVISIBLE}
+ }
+ PythonGeo {
+  name EmitterPythonGeoIn
+  xpos -590
+  ypos 1935
+  addUserKnob {20 keepOnExecute +INVISIBLE}
+ }
+ WriteGeo {
+  file /var/tmp/nuke-u501/CrowdControl/f6ef53a0-71dd-4ee7-ac35-995f62d77c70.obj
+  file_type obj
+  name WriteEmitterGeo
+  xpos -590
+  ypos 1979
+  addUserKnob {20 keepOnExecute +INVISIBLE}
+ }
+ ReadGeo2 {
+  inputs 0
+  file /var/tmp/nuke-u501/CrowdControl/f6ef53a0-71dd-4ee7-ac35-995f62d77c70.obj
+  name ReadEmitterGeo
+  xpos -590
+  ypos 2099
+  addUserKnob {20 keepOnExecute +INVISIBLE}
+ }
+ PythonGeo {
+  name EmitterPythonGeoOut
+  xpos -590
+  ypos 2151
+  addUserKnob {20 keepOnExecute l INVISIBLE +INVISIBLE}
+ }
+ StickyNote {
+  inputs 0
+  name autoGenNote2
+  label "some node labels won't refresh immediately if the\nsettings are changed in the parent group crontrols"
+  note_font Verdana
+  note_font_size 25
+  xpos -612
+  ypos 498
+  addUserKnob {20 keepOnExecute +INVISIBLE}
+ }
+ StickyNote {
+  inputs 0
+  name autoGenNote1
+  label "<l>AUTO GENERATED NODES>>>>\n\nNodes are deleted and regenerated\non executing \"Make Cards\" button"
+  note_font_size 50
+  xpos -703
+  ypos 253
+  addUserKnob {20 keepOnExecute +INVISIBLE}
+ }
+ Input {
+  inputs 0
+  name look
+  label "input \[value number]"
+  xpos -370
+  ypos -181
+  number 1
+ }
+ Dot {
+  name lookDot
+  tile_color 0xffffffff
+  note_font_size 50
+  note_font_color 0xff00ff
+  xpos -336
+  ypos 1674
+  addUserKnob {20 User}
+  addUserKnob {20 keepOnExecute l INVISIBLE +INVISIBLE n 1}
+  addUserKnob {1 keepOnBake l INVISIBLE +INVISIBLE}
+ }
+ Input {
+  inputs 0
+  name img1
+  label "input \[value number]"
+  xpos 180
+  ypos -181
+  number 2
+ }
+ Scene {
+  inputs 0
+  selectable false
+  name scene
+  xpos -360
+  ypos 1962
+  addUserKnob {20 keepOnExecute +INVISIBLE}
+  addUserKnob {1 keepOnBake +INVISIBLE}
+ }
+ Output {
+  name Output
+  xpos -370
+  ypos 2151
+  addUserKnob {20 keepOnExecute l INVISIBLE +INVISIBLE}
+  addUserKnob {26 keepOnBake l INVISIBLE +INVISIBLE}
+ }
+ Input {
+  inputs 0
+  name img2
+  label "input \[value number]"
+  xpos 290
+  ypos -181
+  number 3
+ }
+end_group
