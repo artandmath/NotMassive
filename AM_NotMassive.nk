@@ -2,7 +2,7 @@ set cut_paste_input [stack 0]
 version 10.5 v6
 push $cut_paste_input
 Group {
- name NotMassive3
+ name NotMassive
  onCreate "group = nuke.thisNode()\ngroup\['displayPercentage'].setFlag(0x00000002)\ngroup\['displayPercentage'].setRange(0,100)\ngroup\['displayPercentOffset'].setFlag(0x00000002)\ngroup\['displayPercentOffset'].setRange(0,100)\n"
  knobChanged "import AM_NotMassive as nm\n\nprint \"nm knobchanged\"\n\ngroup = nuke.thisNode()\nknob = nuke.thisKnob()\n\nprint 'Knob: %s set to: %s' % (knob.name(), knob.value())\n\nif knob.name() == 'inputChange':\n    nm.respondToInputChange (group)\nelse:\n    nm.respondToKnobChange (knob,group)\n\nprint \"nm knobchanged\\n\""
  tile_color 0xff8b32ff
@@ -15,6 +15,7 @@ Group {
  addUserKnob {26 generateDivider l Generate}
  addUserKnob {26 spacer1 l " " T " "}
  addUserKnob {3 vertexStep l "Use every" t "Create a card at every Nth vertex"}
+ vertexStep 1
  addUserKnob {3 startVertex l "Nth vertex starting at" t "The starting vertex. This will offset the vertices on which each card is created. For example, generating crowd on every 4th vertex starting at vertex 0 will produce a different result than generating a crowd on every 4th vertex starting at vertex 2" -STARTLINE}
  addUserKnob {6 useSelection l "Use saved vertex selection" t "Use selected vertices. Vertices on the geo must be selected in the viewer first and saved." +STARTLINE}
  addUserKnob {22 saveSelection l "save selection" t "Save the points selected in the viewport. \n\nWARNING: This could include the points of the cards of a previous crowd if the crowd is visible in the viewport and points on the cards are also selected.\n\nPoints are saved inside a hidden text knob in this group to be used when generating cards. \n\nFor loading the points, they are also saved in a  GeoSelect node inside the group" -STARTLINE +DISABLED T "import AM_NotMassive as nm\n\ngroup = nuke.thisNode()\n\nnm.saveSelectedVertices(group)"}
@@ -32,6 +33,7 @@ Group {
  addUserKnob {26 displayDivider l Display}
  addUserKnob {26 spacer3 l " " T " "}
  addUserKnob {3 displayPercentage l "Display percent in GUI" t "Display a percentage of the cards in GUI to speed up interactivity. If rendered via the command-line or on a render farm, all cards will render." R 0 100}
+ displayPercentage 100
  addUserKnob {3 displayPercentOffset l "Display percent offset" t "Cycle through the visible cards if displaying less that 100 percent of the cards in the nuke interface." R 0 100}
  addUserKnob {3 randomColorSeed l "Random color seed" t "seed for the random color channel"}
  addUserKnob {26 spacer4 l " " T " "}
@@ -39,6 +41,7 @@ Group {
  addUserKnob {26 spacer5 l " " T " "}
  addUserKnob {7 pivotOffset l "Y offset" t "Change the Y-pivot on the cards. Set it to the position of the feet of the input characters" R -0.5 0.5}
  addUserKnob {7 scale l Height t "Change the height of the cards" R 0 20}
+ scale 10
  addUserKnob {7 scaleVariation l "Height variation" t "Randomly vary the height of the cards"}
  addUserKnob {3 scaleSeed l "with seed" t "seed for height variation" -STARTLINE}
  addUserKnob {13 positionOffset l "Position offset" t "randomly offset each card to a maximum distance of the position offset"}
