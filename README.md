@@ -1,8 +1,10 @@
 # NotMassive
 A crowd generator for Nuke
 
+```
 Install AM_NotMassive.py in your ~/.nuke folder or a folder where nuke can import the file via python.
 Install AM_NotMassive.nk in toolsets or whereever.
+```
 
 License and pictorial documentation follows.
 
@@ -11,6 +13,8 @@ Happy comping!
 @Darkness - Daniel Harkness
 
 ![screenshot](https://raw.githubusercontent.com/artandmath/NotMassive/master/docs/NotMassive_Screenshot.jpg)
+
+## License
 
 This is free and unencumbered software released into the public domain.
 
@@ -36,3 +40,17 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
+
+## Picture docs
+
+![vertex settings][https://github.com/artandmath/NotMassive/blob/master/docs/vertex.gif?raw=true]
+![input order][https://github.com/artandmath/NotMassive/blob/master/docs/inputOrder.gif?raw=true]
+![pivot offset][https://github.com/artandmath/NotMassive/blob/master/docs/pivotOffset.gif?raw=true]
+![scale][https://github.com/artandmath/NotMassive/blob/master/docs/scale.gif?raw=true]
+![position offset][https://github.com/artandmath/NotMassive/blob/master/docs/positionOffset.gif?raw=true]
+![time offset none][https://github.com/artandmath/NotMassive/blob/master/docs/timeOffsetNone.gif?raw=true]
+![time offset step][https://github.com/artandmath/NotMassive/blob/master/docs/timeOffsetStep.gif?raw=true]
+![time offset random][https://github.com/artandmath/NotMassive/blob/master/docs/timeOffsetRandom.gif?raw=true]
+![look strength][https://github.com/artandmath/NotMassive/blob/master/docs/lookStrength.gif?raw=true]
+![channels][https://github.com/artandmath/NotMassive/blob/master/docs/channels.gif?raw=true]
+![selected vertices][https://github.com/artandmath/NotMassive/blob/master/docs/selected vertices.gif?raw=true]
