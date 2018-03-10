@@ -43,14 +43,14 @@ For more information, please refer to <http://unlicense.org/>
 
 ## Picture docs
 
-![vertex settings][https://github.com/artandmath/NotMassive/blob/master/docs/vertex.gif?raw=true]
-![input order][https://github.com/artandmath/NotMassive/blob/master/docs/inputOrder.gif?raw=true]
-![pivot offset][https://github.com/artandmath/NotMassive/blob/master/docs/pivotOffset.gif?raw=true]
-![scale][https://github.com/artandmath/NotMassive/blob/master/docs/scale.gif?raw=true]
-![position offset][https://github.com/artandmath/NotMassive/blob/master/docs/positionOffset.gif?raw=true]
-![time offset none][https://github.com/artandmath/NotMassive/blob/master/docs/timeOffsetNone.gif?raw=true]
-![time offset step][https://github.com/artandmath/NotMassive/blob/master/docs/timeOffsetStep.gif?raw=true]
-![time offset random][https://github.com/artandmath/NotMassive/blob/master/docs/timeOffsetRandom.gif?raw=true]
-![look strength][https://github.com/artandmath/NotMassive/blob/master/docs/lookStrength.gif?raw=true]
-![channels][https://github.com/artandmath/NotMassive/blob/master/docs/channels.gif?raw=true]
-![selected vertices][https://github.com/artandmath/NotMassive/blob/master/docs/selected vertices.gif?raw=true]
+![vertex settings](https://github.com/artandmath/NotMassive/blob/master/docs/vertex.gif?raw=true)
+![input order](https://github.com/artandmath/NotMassive/blob/master/docs/inputOrder.gif?raw=true)
+![pivot offset](https://github.com/artandmath/NotMassive/blob/master/docs/pivotOffset.gif?raw=true)
+![scale](https://github.com/artandmath/NotMassive/blob/master/docs/scale.gif?raw=true)
+![position offset](https://github.com/artandmath/NotMassive/blob/master/docs/positionOffset.gif?raw=true)
+![time offset none](https://github.com/artandmath/NotMassive/blob/master/docs/timeOffsetNone.gif?raw=true)
+![time offset step](https://github.com/artandmath/NotMassive/blob/master/docs/timeOffsetStep.gif?raw=true)
+![time offset random](https://github.com/artandmath/NotMassive/blob/master/docs/timeOffsetRandom.gif?raw=true)
+![look strength](https://github.com/artandmath/NotMassive/blob/master/docs/lookStrength.gif?raw=true)
+![channels](https://github.com/artandmath/NotMassive/blob/master/docs/channels.gif?raw=true)
+![selected vertices](https://github.com/artandmath/NotMassive/blob/master/docs/selected vertices.gif?raw=true)
