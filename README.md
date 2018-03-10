@@ -53,4 +53,4 @@ For more information, please refer to <http://unlicense.org/>
 ![time offset random](https://github.com/artandmath/NotMassive/blob/master/docs/timeOffsetRandom.gif?raw=true)
 ![look strength](https://github.com/artandmath/NotMassive/blob/master/docs/lookStrength.gif?raw=true)
 ![channels](https://github.com/artandmath/NotMassive/blob/master/docs/channels.gif?raw=true)
-![selected vertices](https://github.com/artandmath/NotMassive/blob/master/docs/selected vertices.gif?raw=true)
+![selected vertices](https://github.com/artandmath/NotMassive/blob/master/docs/selectedVertices.gif?raw=true)
