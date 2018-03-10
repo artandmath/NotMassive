@@ -35,6 +35,7 @@ For more information, please refer to <http://unlicense.org/>
 import uuid
 import os
 import random
+import colorsys
 import nuke
 import nukescripts
 
@@ -164,10 +165,8 @@ def respondToKnobChange(knob,group):
     # 'mirror' checkbox for time offset checked/unchecked
     elif knob.name() == 'mirror':
         if group['mirror'].value():
-            group['mirrorSeed'].setEnabled(False)
             group['mirrorSeed'].setEnabled(True)
         else:
-            group['mirrorSeed'].setEnabled(True)
             group['mirrorSeed'].setEnabled(False)
 
     # knob is invisible last in the list and only called when
@@ -186,15 +185,13 @@ def setDefaultValues(group):
     group['useSelection'].setValue(False)
     group['vertexRandom'].setValue(False)
     group['inputOrder'].setValue(0)
-    group['displayPercentage'].setValue(100)
-    group['displayPercentOffset'].setValue(0)
-    group['randomColorSeed'].setValue(0)
-    group['pivotOffset'].setValue(0)
+    group['pivotOffset'].setValue(-0.5)
     group['scale'].setValue(10)
     group['scaleVariation'].setValue(0)
     group['scaleSeed'].setValue(0)
     group['positionOffset'].setValue([0,0,0])
-    group['positionOffsetSeed'].setValue(0)
+    group['positionOffsetXZseed'].setValue(0)
+    group['positionOffsetYseed'].setValue(0)
     group['timeOffset'].setValue(0)
     group['timeOffsetStep'].setValue(0)
     group['vertexStep'].setValue(1)
@@ -202,6 +199,10 @@ def setDefaultValues(group):
     group['timeOffsetSeed'].setValue(0)
     group['mirror'].setValue(False)
     group['mirrorSeed'].setValue(0)
+    group['aov_randomSeed'].setValue(0)
+    group['displayAOVs'].setValue(True)
+    group['displayPercentage'].setValue(100)
+    group['displayPercentOffset'].setValue(0)
     group['look_axis'].setValue(0)
     group['look_rotate_x'].setValue(True)
     group['look_rotate_y'].setValue(True)
@@ -335,14 +336,7 @@ def saveSelectedVertices(group):
     # store the points in a hidden field
     print 'Saving points: %s' % (pointsStr)
     group['vertexStore'].setValue(pointsStr)
-
-    # store the points in a geoSelect for retrieval
-    nuke.toNode('EmitterGeoSelectIn')['save_selection'].execute()
    
-def restoreSelectedVertices(group):
-    # restore points from geo select
-    nuke.toNode('EmitterGeoSelectIn')['restore_selection'].execute()
-
 def retrieveSavedVertices(group):
     ''' retrieve the stored points '''
 
@@ -351,7 +345,7 @@ def retrieveSavedVertices(group):
     # retrieve points from storage as sting and convert back to real points
     newPointsList = []
     newPointsSplit = pointsStr.split('|')
-    for newPointStr in newPointsSplit:
+    for newPointStr in set(newPointsSplit):
        newPointStr = newPointStr[1:-1]
        newPointSplit = newPointStr.split(',')
        newPoint = []
@@ -422,6 +416,7 @@ def makeCrowd(group):
         lookDot = nuke.toNode('lookDot')
         img1 = nuke.toNode('img1')
         lastXY = [img1['xpos'].value()-gridWidth,img1['ypos'].value()]
+        lookDot.setYpos(int(lastXY[1]+gridHeight*76))
 
         switchInputs = imageInputList(group)
         
@@ -430,10 +425,12 @@ def makeCrowd(group):
         nuke.Layer( crowdRandomColorStr , ['red', 'green', 'blue'] )
 
         crowdIDStr = 'crowdID'
-        nuke.Layer( crowdIDStr, ['id'] )
+        nuke.Layer( crowdIDStr, ['id','sprite'] )
 
+        '''
         crowdCharacterMaskStr = 'crowdCharacterMask'
         nuke.Layer( crowdCharacterMaskStr , ['alpha'] )
+        '''
 
         crowdMirrorMaskStr = 'crowdMirrorMask'
         nuke.Layer( crowdMirrorMaskStr , ['alpha'] )
@@ -447,6 +444,7 @@ def makeCrowd(group):
 
             # make a switch to plug in the image inputs
             inputSwitch = nuke.createNode('Switch', inpanel = False)
+            inputSwitch.setName('imgSwitch')
             inputSwitch['label'].setValue('which: [value which]\nauto-generated')
             inputSwitch.setXpos(int(lastXY[0]+gridWidth))
             inputSwitch.setYpos(int(lastXY[1]+gridHeight*20))
@@ -465,32 +463,16 @@ def makeCrowd(group):
             if whichInput >= len(switchInputs):
                 whichInput = 0
 
-            # make the grade layer which shuffles in the alpha
-            randomShuffle = nuke.createNode('Shuffle', inpanel = False)
-            randomShuffle['in'].setValue('alpha')
-            randomShuffle['out'].setValue(crowdRandomColorStr)
-            randomShuffle['label'].setValue('([value out])\nauto-generated')
-            randomShuffle.setXpos(int(lastXY[0]+gridWidth))
-            randomShuffle.setYpos(int(lastXY[1]+gridHeight*24))
-
-            # make the grade layer mult
-            randomColorMult = nuke.createNode('Multiply' ,inpanel = False)
-            randomColorMult['channels'].setValue(crowdRandomColorStr)
-            randomColorMult['value'].setSingleValue(False)
-            randomColorMult['value'].setExpression('random(%s+%s,1)' % ('parent.randomColorSeed',str(i+0)),0)
-            randomColorMult['value'].setExpression('random(%s+%s,1)' % ('parent.randomColorSeed',str(i+1)),1)
-            randomColorMult['value'].setExpression('random(%s+%s,1)' % ('parent.randomColorSeed',str(i+2)),2)
-            randomColorMult['label'].setValue('auto-generated')
-            randomColorMult.setXpos(int(lastXY[0]+gridWidth))
-            randomColorMult.setYpos(int(lastXY[1]+gridHeight*28))
-            
+            '''
             # make the id channel
             idShuffle = nuke.createNode('Shuffle', inpanel = False)
-            idShuffle['in'].setValue('alpha')
+            idShuffle.setName('aov_idShuffle')
+            idShuffle['in'].setValue('none')
             idShuffle['out'].setValue(crowdIDStr)
             idShuffle['label'].setValue('([value out])\nauto-generated')
+            idShuffle['disable'].setExpression('!parent.displayAOVs')
             idShuffle.setXpos(int(lastXY[0]+gridWidth))
-            idShuffle.setYpos(int(lastXY[1]+gridHeight*32))
+            idShuffle.setYpos(int(lastXY[1]+gridHeight*30))
 
             # make the id mult
             idKnob = nuke.Int_Knob('ID','ID')
@@ -498,21 +480,84 @@ def makeCrowd(group):
 
             idMult = nuke.createNode('Multiply' ,inpanel = False)
             idMult.addKnob( idKnob )
+            idMult.setName('aov_idMult')
             idMult['channels'].setValue(crowdIDStr)
             idMult['value'].setSingleValue(True)
-            idMult['value'].setExpression('%s' % ('this.ID*2'))
+            idMult['value'].setExpression('%s' % ('this.ID+1'))
             #idMult['maskChannelInput'].setValue('rgba.alpha')
             idMult['label'].setValue('auto-generated')
+            idMult['disable'].setExpression('!parent.aov_id')
             idMult.setXpos(int(lastXY[0]+gridWidth))
-            idMult.setYpos(int(lastXY[1]+gridHeight*36))
+            idMult.setYpos(int(lastXY[1]+gridHeight*32))
+            '''
+
+            # make the id expression
+            idExpr = nuke.createNode('Expression' ,inpanel = False)
+            idExpr.setName('aov_idExpr')
+            idExpr['temp_name0'].setValue('id')
+            idExpr['temp_expr0'].setValue(str(i))
+            idExpr['temp_name1'].setValue('inp')
+            idExpr['temp_expr1'].setValue('[value %s.which]' % inputSwitch.name())
+            idExpr['channel0'].setValue(crowdIDStr)
+            idExpr['channel0'].enableChannel(0,True)
+            idExpr['channel0'].enableChannel(1,False)
+            idExpr['channel0'].enableChannel(2,False)
+            idExpr['expr0'].setValue('id*rgba.alpha')
+            idExpr['channel1'].setValue(crowdIDStr)
+            idExpr['channel1'].enableChannel(0,False)
+            idExpr['channel1'].enableChannel(1,True)
+            idExpr['channel1'].enableChannel(2,False)
+            idExpr['expr1'].setValue('inp*rgba.alpha')
+            idExpr['channel2'].setValue('none')
+            idExpr['channel3'].setValue('none')
+            idExpr['label'].setValue('auto-generated')
+            idExpr['disable'].setExpression('!parent.displayAOVs')
+            idExpr.setXpos(int(lastXY[0]+gridWidth))
+            idExpr.setYpos(int(lastXY[1]+gridHeight*30))
+
+            # make the grade layer which shuffles in the alpha
+            randomShuffle = nuke.createNode('Shuffle', inpanel = False)
+            randomShuffle.setName('aov_randomShuffle')
+            randomShuffle['in'].setValue('alpha')
+            randomShuffle['out'].setValue(crowdRandomColorStr)
+            randomShuffle['label'].setValue('([value out])\nauto-generated')
+            randomShuffle['disable'].setExpression('!parent.displayAOVs')
+            randomShuffle.setXpos(int(lastXY[0]+gridWidth))
+            randomShuffle.setYpos(int(lastXY[1]+gridHeight*40))
+
+            # make the grade layer mult
+            randomColorMult = nuke.createNode('Multiply' ,inpanel = False)
+            randomColorMult.setName('aov_randomMult')
+            randomColorMult['channels'].setValue(crowdRandomColorStr)
+            randomColorMult['value'].setSingleValue(False)
+            randomColorMult['value'].setExpression('random(%s+%s,1)' % ('parent.aov_randomSeed',str(i+0)),0)
+            randomColorMult['value'].setExpression('random(%s+%s,1)' % ('parent.aov_randomSeed',str(i+1)),1)
+            randomColorMult['value'].setExpression('random(%s+%s,1)' % ('parent.aov_randomSeed',str(i+2)),2)
+            randomColorMult['unpremult'].setValue('rgba.alpha')
+            randomColorMult['label'].setValue('auto-generated')
+            randomColorMult['disable'].setExpression('!parent.displayAOVs')
+            randomColorMult.setXpos(int(lastXY[0]+gridWidth))
+            randomColorMult.setYpos(int(lastXY[1]+gridHeight*42))
 
             # make the character mask which can be used for lighting
+            '''
             charMaskShuffle = nuke.createNode('Shuffle', inpanel = False)
             charMaskShuffle['in'].setValue('alpha')
             charMaskShuffle['out'].setValue(crowdCharacterMaskStr)
             charMaskShuffle['label'].setValue('([value out])\nauto-generated')
             charMaskShuffle.setXpos(int(lastXY[0]+gridWidth))
             charMaskShuffle.setYpos(int(lastXY[1]+gridHeight*40))
+            '''
+
+            # make the mirror mask which can be used for flipping AOVs
+            mirrorMaskShuffle = nuke.createNode('Shuffle', inpanel = False)
+            mirrorMaskShuffle.setName('aov_mirrorShuffle')
+            mirrorMaskShuffle['in'].setValue('alpha')
+            mirrorMaskShuffle['out'].setValue(crowdMirrorMaskStr)
+            mirrorMaskShuffle['label'].setValue('([value out])\nauto-generated')
+            mirrorMaskShuffle['disable'].setExpression('!parent.displayAOVs')
+            mirrorMaskShuffle.setXpos(int(lastXY[0]+gridWidth))
+            mirrorMaskShuffle.setYpos(int(lastXY[1]+gridHeight*50))
 
             # make the mirror for flopping random cards
             idKnob = nuke.Int_Knob('mirrorID','mirrorID')
@@ -524,25 +569,17 @@ def makeCrowd(group):
             flop['disable'].setExpression('parent.mirror?random(this.mirrorID+parent.mirrorSeed,1)>0.5?1:0:1')
             flop['label'].setValue('auto-generated')
             flop.setXpos(int(lastXY[0]+gridWidth))
-            flop.setYpos(int(lastXY[1]+gridHeight*44))
+            flop.setYpos(int(lastXY[1]+gridHeight*52))
 
-            # make the mirror mask which can be used for flipping AOVs
-            crowdMirrorMaskStr = 'crowdMirrorMask'
-            mirrorMaskShuffle = nuke.createNode('Shuffle', inpanel = False)
-            mirrorMaskShuffle['in'].setValue('alpha')
-            mirrorMaskShuffle['out'].setValue(crowdMirrorMaskStr)
-            mirrorMaskShuffle['disable'].setExpression('input0.disable')
-            mirrorMaskShuffle['label'].setValue('([value out])\nauto-generated')
-            mirrorMaskShuffle.setXpos(int(lastXY[0]+gridWidth))
-            mirrorMaskShuffle.setYpos(int(lastXY[1]+gridHeight*48))
-
+            # make the mirror mask mult which can be used for flipping AOVs
             mirrorMaskMult = nuke.createNode('Multiply', inpanel = False)
+            mirrorMaskMult.setName('aov_mirrorMult')
             mirrorMaskMult['channels'].setValue(crowdMirrorMaskStr)
             mirrorMaskMult['value'].setValue(0)
-            mirrorMaskMult['disable'].setExpression('input0.disable')
-            mirrorMaskMult['label'].setValue('([value out])\nauto-generated')
+            mirrorMaskMult['disable'].setExpression('parent.displayAOVs?!input0.disable:1')
+            mirrorMaskMult['label'].setValue('(auto-generated')
             mirrorMaskMult.setXpos(int(lastXY[0]+gridWidth))
-            mirrorMaskMult.setYpos(int(lastXY[1]+gridHeight*52))
+            mirrorMaskMult.setYpos(int(lastXY[1]+gridHeight*54))
 
             # make the time offset
             idKnob = nuke.Int_Knob('offsetID','offsetID')
@@ -556,7 +593,7 @@ def makeCrowd(group):
             timeOffset['time_offset'].setExpression('parent.timeOffsetRandomize?%s:%s' % (timeOffsetRandomizeExpr,timeOffsetStepExpr))
             timeOffset['label'].setValue('[value time_offset] frames\nauto-generated')
             timeOffset.setXpos(int(lastXY[0]+gridWidth))
-            timeOffset.setYpos(int(lastXY[1]+gridHeight*56))
+            timeOffset.setYpos(int(lastXY[1]+gridHeight*60))
 
 
             # make the card
@@ -573,7 +610,7 @@ def makeCrowd(group):
                 'parent.displayPercentOffset+this.cardID:this.cardID-100+parent.displayPercentOffset')
             card['disable'].setExpression('$gui?parent.displayPercentage<100?parent.displayPercentage>this.cardIDOffset?0:1:0:1')
             card.setXpos(int(lastXY[0]+gridWidth))
-            card.setYpos(int(lastXY[1]+gridHeight*60))
+            card.setYpos(int(lastXY[1]+gridHeight*70))
             cardList.append(card)
         
             # make the transform geo
@@ -583,11 +620,11 @@ def makeCrowd(group):
             transformGeo.setInput(0,card)
             transformGeo.setInput(2,lookDot)
             transformGeo['translate'].setExpression('random(%s+%s,1)*parent.positionOffset(0)' \
-                '-parent.positionOffset(0)/2+%s' % ('parent.positionOffsetSeed',str(i+0),point[0]),0)
+                '-parent.positionOffset(0)/2+%s' % ('parent.positionOffsetXZseed',str(i+0),point[0]),0)
             transformGeo['translate'].setExpression('random(%s+%s,1)*parent.positionOffset(1)' \
-                '-parent.positionOffset(1)/2+%s' % ('parent.positionOffsetSeed',str(i+1),point[1]),1)
+                '-parent.positionOffset(1)/2+%s' % ('parent.positionOffsetYseed',str(i+1),point[1]),1)
             transformGeo['translate'].setExpression('random(%s+%s,1)*parent.positionOffset(2)' \
-                '   -parent.positionOffset(2)/2+%s' % ('parent.positionOffsetSeed',str(i+2),point[2]),2)
+                '   -parent.positionOffset(2)/2+%s' % ('parent.positionOffsetXZseed',str(i+2),point[2]),2)
             transformGeo['pivot'].setExpression('parent.pivotOffset',1)
             transformGeo['uniform_scale'].setExpression('parent.scale+random(%s+%s,1)*' \
                 '(scaleVariation*parent.scale)-(scaleVariation*parent.scale)/2' % ('parent.scaleSeed', str(i)))
@@ -606,6 +643,8 @@ def makeCrowd(group):
         scene = nuke.toNode('scene')
         for i in range(len(transformGeoList)):
             scene.setInput(i,transformGeoList[i])
+        scene.setYpos(int(lookDot['ypos'].value()+gridHeight*10))    
+        nuke.toNode('Output').setYpos(int(lookDot['ypos'].value()+gridHeight*20))    
 
         # set up the cards so that they can be culled by a percentage in the gui
         random.seed(int(group['vertexStep'].value()))   
@@ -619,6 +658,23 @@ def makeCrowd(group):
         group['label'].setValue('%s Cards' % (len(transformGeoList)))
 
 ''' crowd baking methods'''
+
+def hexToRGB(hexCol):
+    hex = '%08x' % hexCol 
+    r = float(int(hex[0:2], 16))/255.0
+    g = float(int(hex[2:4], 16))/255.0
+    b = float(int(hex[4:6], 16))/255.0
+    #a = [float(int(hex[6:8], 16))/255.0]
+    return [r,g,b]
+
+def bakeTileColor(node):
+    tc_hex = node['tile_color'].value()
+    tc_rgb = hexToRGB(tc_hex)
+    tc_hsv = colorsys.rgb_to_hsv(tc_rgb[0],tc_rgb[1],tc_rgb[2])
+    tc_hsv = [tc_hsv[0],tc_hsv[1],tc_hsv[2]*0.5]
+    tc_rgb = colorsys.hsv_to_rgb(tc_hsv[0],tc_hsv[1],tc_hsv[2])
+    tc_hex = int('%02x%02x%02x%02x' % (tc_rgb[0]*255,tc_rgb[1]*255,tc_rgb[2]*255,1),16)
+    node['tile_color'].setValue( tc_hex )
 
 def keepSceneAndRemoveCrowdGeneratingNodes(group):
     ''' remove noes used to generate the crowd when we bake a crowd '''
@@ -665,50 +721,79 @@ def remove_user_knobs(node):
     # Select first tab
     node.knob(0).setFlag(0)
 
-def bakeScene(oldGroup,newGroup):
+def bakeCardTree(transformGeoNode):
+    n = transformGeoNode
+    while 'imgSwitch' not in n.name() :
+        for key in n.knobs().keys():
+            kn = n.knob(key)
+            if kn.hasExpression():
+                #with oldGroup:
+                #oldNode = nuke.toNode(n.name())
+                #oldknob = oldNode.knob(kn.name())
+                #v = oldknob.value()
+                v = kn.value()
+                kn.clearAnimated()
+                kn.setValue(v)
+        #deal with the expression nodes
+        if n.Class() == 'Expression':
+            for i in range(0,3):
+                e = 'temp_expr%s' % (i)
+                n[e].setValue(n[e].value())
+        #bake node a golden hue of butter subtitute
+        tc_rgb = [1,0.545,0.196]
+        tc_hex = int('%02x%02x%02x%02x' % (tc_rgb[0]*255,tc_rgb[1]*255,tc_rgb[2]*255,1),16)
+        n['tile_color'].setValue( tc_hex )
+        remove_user_knobs(n)
+        n = n.dependencies()[0]
+
+
+    # link up inputs and remove switchs
+    switch = n
+    if switch.Class() == 'Switch':
+        if len (switch.dependent()) > 0:
+            downstreamNode = switch.dependent()[0]
+            upstreamNode = switch.input(int(switch['which'].value()))
+
+            dot = nuke.createNode('Dot',inpanel = False)
+            dot.setName('imgSwitch')
+            dot.setSelected(False)
+            dot.setXpos(int(switch.xpos()+switch.screenWidth()/2-dot.screenWidth()))
+            dot.setYpos(int(switch.ypos()+switch.screenHeight()/2-dot.screenHeight()))
+            #for some reason the above positioning is sometimes flakey
+            nuke.autoplaceSnap( dot ) 
+
+            dot.setInput(0,upstreamNode)
+            downstreamNode.setInput(0,dot)
+            nuke.delete(switch)
+
+def bakeSelectedNodes(group,nodes):
     '''
-    Bake the inside of the group
+    Baked selected cards
+    Turn on the AOVs first if they're not turned on already so we can bake the AOVs in
+    restore AOV in GUI state
     '''
-    with newGroup:
-        #bake knobs
-        '''
-        walk back from each transformGeo
-        get the value from the old group because values in the new group haven't updated yet
-        and the parent knobs will be gone before we can get the values
+    with group:
+        v = group['displayAOVs'].value()
+        d = group['displayPercentage'].value()
+        group['displayAOVs'].setValue(True)
+        group['displayPercentage'].setValue(100)
 
-        There MUST be a better and quicker way to do this!
-        '''
-        for n in nuke.allNodes('TransformGeo'):
-            while n.Class() != 'Switch':
-                for key in n.knobs().keys():
-                    kn = n.knob(key)
-                    if kn.hasExpression():
-                        with oldGroup:
-                            oldNode = nuke.toNode(n.name())
-                            oldknob = oldNode.knob(kn.name())
-                            v = oldknob.value()
-                            kn.clearAnimated()
-                            kn.setValue(v)
-                n = n.dependencies()[0]
+        transformGeoList = []
+        for n in nodes:
+            while n.Class() != 'TransformGeo':
+                if len(n.dependent())>0:
+                    n = n.dependent()[0]
+                else:
+                    print 'missing dependent:%s' % (n.name())
+            transformGeoList.append(n)
 
-    with newGroup:
-        #remove user knobs
-        for n in nuke.allNodes():
-            remove_user_knobs(n)
-            
-        # link up inputs and remove switchs
-        for switch in nuke.allNodes('Switch'):
-            if len (switch.dependent()) > 0:
-                downstreamNode = switch.dependent()[0]
-                upstreamNode = switch.input(int(switch['which'].value()))
-                downstreamNode.setInput(0,upstreamNode)
-                nuke.delete(switch)
+        for n in set(transformGeoList):
+            for s in nuke.allNodes():
+                s.setSelected(False)
+            bakeCardTree(n)
 
-        # remove GUI display code from cards
-        for card in nuke.allNodes('Card'):
-            card['disable'].clearAnimated()
-            card['disable'].setValue(False)
-            remove_user_knobs(card)
+        group['displayAOVs'].setValue(v)
+        group['displayPercentage'].setValue(d)
 
 def bakeGroup(group):
     '''
@@ -730,7 +815,7 @@ def bakeGroup(group):
             # defaulting to nuke's temp dir, not sure how kosher this is 
             tmpDirRoot = os.environ.get('NUKE_TEMP_DIR')
             
-            # give emitter geo a unique filename so that nuke won't use a cached version
+            # give cloned node unique filename so that nuke won't use a cached version
             groupFileBase = str(uuid.uuid4())
             tmpDir = '%s/CrowdControl' % (tmpDirRoot)
             
@@ -749,6 +834,10 @@ def bakeGroup(group):
             nuke.nodePaste(tmpPath)
             newGroup = nuke.selectedNode()
 
+            #remove callbacks
+            newGroup.knob('knobChanged').setValue('')
+            newGroup.knob('onCreate').setValue('')
+
             #link up the inputs
             for i in range(group.inputs()):
                 inputNode = group.input(i)
@@ -756,34 +845,35 @@ def bakeGroup(group):
                     newGroup.setInput(i,inputNode)
 
             #Bake the group internals
-            bakeScene(group,newGroup)
+            cards = []
+            for n in newGroup.nodes():
+                if n.Class() == 'Card':
+                    cards.append(n)
+            bakeSelectedNodes(newGroup,set(cards))
             keepSceneAndRemoveCrowdGeneratingNodes(newGroup)
 
             #Rename
             newGroupName = '%s_baked' % (group.name())
             newGroup.setName(newGroupName)
 
-            #delete the dynamic knobs
+            #disable the dynamic knobs
             knobsToKeep = []
-
-            #knobsToKeep.append(newGroup['displayPercentage'])
-            #knobsToKeep.append(newGroup['displayPercentOffset'])
-            #knobsToKeep.append(newGroup['divInfo'])
             knobsToKeep.append(newGroup['versionInfo'])
  
+            newGroup['displayAOVs'].setValue(True)
+            newGroup['displayPercentage'].setValue(100)
+
+            values = []
             for key in newGroup.knobs().keys():
                 if newGroup.knob(key) not in knobsToKeep:
                     try:
-                        newGroup.removeKnob(newGroup.knob(key))
+                        newGroup.knob(key).setEnabled(False)
                     except:
                         #not a user knob
                         pass
             versionInfo = newGroup['versionInfo'].value()
-            newGroup['versionInfo'].setValue(versionInfo.replace('\'s','\'s baked with'))
-
-            #remove callbacks
-            newGroup.knob('knobChanged').setValue('')
-            newGroup.knob('onCreate').setValue('')
+            versionInfo = versionInfo.replace('\'s','\'s baked with')
+            newGroup['versionInfo'].setValue(versionInfo)
 
             # pity the fool who doesn't use default node graph preferences
             prefs = nuke.toNode('preferences')
@@ -793,6 +883,8 @@ def bakeGroup(group):
             # position the baked groupp set off from original group
             newGroup.setXpos(int(group.xpos()+gridWidth))
             newGroup.setYpos(int(group.ypos()+gridHeight*2))
+    
+            bakeTileColor(newGroup)
 
 
 
