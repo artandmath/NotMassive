@@ -37,8 +37,8 @@ Group {
  addUserKnob {3 scaleSeed l "with seed" t "seed for height variation" -STARTLINE}
  addUserKnob {26 spacer_c2 l " " T " "}
  addUserKnob {13 positionOffset l "Position offset" t "randomly offset each card to a maximum distance of the position offset"}
- addUserKnob {3 positionOffsetXZseed l "with XZ seed"}
- addUserKnob {3 positionOffsetYseed l "and Y seed" -STARTLINE}
+ addUserKnob {3 positionOffsetXZseed l "with XZ seed" t "seed for X and Z offsets"}
+ addUserKnob {3 positionOffsetYseed l "and Y seed" t "seed for Y offsets" -STARTLINE}
  addUserKnob {26 spacer_c3 l " " T " "}
  addUserKnob {3 timeOffset l "Time offset range" t "Time offset each card.\n\nIf randomly offset the cards will be offset randomly in either direction from the current frame.\n\nIf stepping, cards will be offset in order by the step amount until the time offset has been reached. The next card has a zero offset and the steps begin again until the time offset is reached and so on."}
  addUserKnob {3 timeOffsetStep l " with step" t "step amount in frames" -STARTLINE}
@@ -60,11 +60,11 @@ Group {
  addUserKnob {26 spacer_d2 l " " T " "}
  addUserKnob {26 bakeDiv l Bake}
  addUserKnob {26 spacer_b1 l " " T " "}
- addUserKnob {22 bakeSelectionBtn l "bake selected cards" T "import AM_NotMassive as nm\n\ngroup = nuke.thisNode()\n\nwith group:\n    nm.bakeSelectedNodes(group,nuke.selectedNodes())" +STARTLINE}
- addUserKnob {22 bakeCrowdBtn l "bake crowd and group" t "Creates a copy of the NotMassive group, removes any dynamic controls and bakes in all expressions as fixed values.\n\nYou might want to use this function if you need to extract anything out of the group and use it elsewhere.\n\nBreak out the oven tray, your favourite non-dairy butter substitute and get baking!\n" -STARTLINE T "import AM_NotMassive as nm\n\ngroup = nuke.thisNode()\n\nnm.bakeGroup(group)"}
+ addUserKnob {22 bakeSelectionBtn l "bake selected cards" t "Select a card or cards in the 3D viewer or any nodes inside the group and bake them, removing any expressions.\n\nUse this function to extract anything out of the group and use it elsewhere." T "import AM_NotMassive as nm\n\ngroup = nuke.thisNode()\n\nwith group:\n    nm.bakeSelectedNodes(group,nuke.selectedNodes())" +STARTLINE}
+ addUserKnob {22 bakeCrowdBtn l "bake crowd and group" t "Creates a copy of the NotMassive group, removes any dynamic controls and bakes in all expressions as fixed values.\n\nYou can use this function if you want to ungroup the crowd into the main script.\n\nBreak out the oven tray, your favourite non-dairy butter substitute and get baking!\n" -STARTLINE T "import AM_NotMassive as nm\n\ngroup = nuke.thisNode()\n\nnm.bakeGroup(group)"}
  addUserKnob {26 spacer_b2 l " " T " "}
  addUserKnob {26 divInfo l "" +STARTLINE}
- addUserKnob {26 versionInfo l "" +STARTLINE T "\"I can't believe it's not Massive!\"\n\n@darkness v1.3 2018-03-09"}
+ addUserKnob {26 versionInfo l "" +STARTLINE T "\"I can't believe it's not Massive!\"\n\n@darkness v1.4 2018-03-10"}
  addUserKnob {20 look l Look}
  addUserKnob {4 look_axis l "look axis" M {+Z -Z +Y -Y +X -X}}
  addUserKnob {6 look_rotate_x l "rotate X" -STARTLINE}
