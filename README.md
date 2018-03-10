@@ -10,7 +10,7 @@ License and pictorial documentation follows.
 
 Happy comping!
 
-@darkness - Daniel Harkness
+@darkness
 
 ![screenshot](https://raw.githubusercontent.com/artandmath/NotMassive/master/docs/NotMassive_Screenshot.jpg)
 
