@@ -4,7 +4,7 @@ AM_NotMassive
 "I can't believe it's not Massive!"
 A nuke crowd simulator by Art and Math
 
-@Darkness - Daniel Harkness
+@darkness - Daniel Harkness
 
 This is free and unencumbered software released into the public domain.
 
