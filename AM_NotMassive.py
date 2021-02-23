@@ -608,7 +608,7 @@ def makeCrowd(group):
             card.addKnob( idOffsetKnob )
             card['cardIDOffset'].setExpression('parent.displayPercentOffset+this.cardID<=100?'\
                 'parent.displayPercentOffset+this.cardID:this.cardID-100+parent.displayPercentOffset')
-            card['disable'].setExpression('$gui?parent.displayPercentage<100?parent.displayPercentage>this.cardIDOffset?0:1:0:1')
+            card['disable'].setExpression('$gui?parent.displayPercentage<100?parent.displayPercentage>this.cardIDOffset?0:1:0:0')
             card.setXpos(int(lastXY[0]+gridWidth))
             card.setYpos(int(lastXY[1]+gridHeight*70))
             cardList.append(card)
