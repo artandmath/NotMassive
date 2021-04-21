@@ -77,7 +77,7 @@ Group {
  addUserKnob {22 bakeCrowdBtn l "bake crowd and group" t "Creates a copy of the NotMassive group, removes any dynamic controls and bakes in all expressions as fixed values.\n\nYou can use this function if you want to ungroup the crowd into the main script.\n\nBreak out the oven tray, your favourite non-dairy butter substitute and get baking!" -STARTLINE T "import AM_NotMassive as nm\n\ngroup = nuke.thisNode()\n\nnm.bakeGroup(group)"}
  addUserKnob {26 spacer_b2 l " " T " "}
  addUserKnob {26 divInfo l "" +STARTLINE}
- addUserKnob {26 versionInfo l "" +STARTLINE T "\"I can't believe it's not Massive!\"\n\n@darkness v1.5 2018-03-11"}
+ addUserKnob {26 versionInfo l "" +STARTLINE T "\"I can't believe it's not Massive!\"\n\n@darkness v1.7 2018-03-11"}
  addUserKnob {20 look l Look}
  addUserKnob {4 look_axis l "look axis" M {+Z -Z +Y -Y +X -X}}
  addUserKnob {6 look_rotate_x l "rotate X" -STARTLINE}
