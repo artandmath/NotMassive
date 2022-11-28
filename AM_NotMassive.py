@@ -387,10 +387,10 @@ def removePreviousScene(group):
             scene.setInput(i,None)
 
 def makeCrowd(group):
-    ''' Atists hits make crowd button and we make a crowd '''
+    ''' Artist hits make crowd button and we make a crowd '''
 
     with group:
-        # get a list of points we want to creat cards on
+        # get a list of points we want to create cards on
         points = []
         if group['useSelection'].value() and len(group['vertexStore'].value())>0:
             allPoints = retrieveSavedVertices(group)
@@ -422,18 +422,18 @@ def makeCrowd(group):
         
         # make channels, channel strings are used later in node creation
         crowdRandomColorStr = 'crowdRandomColor'
-        nuke.Layer( crowdRandomColorStr , ['red', 'green', 'blue'] )
+        nuke.Layer( crowdRandomColorStr , [crowdRandomColorStr+'.red', crowdRandomColorStr+'.green', crowdRandomColorStr+'.blue'] )
 
         crowdIDStr = 'crowdID'
-        nuke.Layer( crowdIDStr, ['id','sprite'] )
+        nuke.Layer( crowdIDStr, [crowdIDStr+'.id', crowdIDStr+.'sprite'] )
 
         '''
         crowdCharacterMaskStr = 'crowdCharacterMask'
-        nuke.Layer( crowdCharacterMaskStr , ['alpha'] )
+        nuke.Layer( crowdCharacterMaskStr , [crowdCharacterMaskStr+'.alpha'] )
         '''
 
         crowdMirrorMaskStr = 'crowdMirrorMask'
-        nuke.Layer( crowdMirrorMaskStr , ['alpha'] )
+        nuke.Layer( crowdMirrorMaskStr , [crowdMirrorMaskStr+'.alpha'] )
 
         transformGeoList = []
         cardList = []
@@ -885,8 +885,3 @@ def bakeGroup(group):
             newGroup.setYpos(int(group.ypos()+gridHeight*2))
     
             bakeTileColor(newGroup)
-
-
-
-
-
