@@ -1,6 +1,9 @@
 # NotMassive
 A crowd generator for Nuke
 
+> [!WARNING]
+> NotMassive was written for Nuke 9. There have been some updates to Nuke, plus Python 2/3 differences that make NotMasive incompatable with recent vesrions of Nuke.
+
 ```
 Install AM_NotMassive.py in your ~/.nuke folder or a folder where nuke can import the file via python.
 Install AM_NotMassive.nk in toolsets or whereever.
@@ -9,10 +12,6 @@ Install AM_NotMassive.nk in toolsets or whereever.
 License and pictorial documentation follows.
 
 Happy comping!
-
-> [!WARNING]
-> NotMassive was written for Nuke 9. There have been some updates to Nuke, plus Python 2/3 differences that make NotMasive incompatable with recent vesrions of Nuke.
-
 
 ![screenshot](https://raw.githubusercontent.com/artandmath/NotMassive/master/docs/NotMassive_Screenshot.jpg)
 
