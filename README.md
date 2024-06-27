@@ -10,7 +10,7 @@ License and pictorial documentation follows.
 
 Happy comping!
 
-> [!WARTNING]
+> [!WARNING]
 > NotMassive was written for Nuke 9. There have been some updates to Nuke, plus Python 2/3 differences that make NotMasive incompatable with recent vesrions of Nuke.
 
 
