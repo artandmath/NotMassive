@@ -49,7 +49,7 @@ def respondToInputChange(group):
     AFTER the last connected input
     '''
     with group:
-        print 'input changed'
+        print('input changed')
         # add a new input if we run out of image inputs
 
         lastImgInput = nuke.toNode('img1')
@@ -62,8 +62,8 @@ def respondToInputChange(group):
                 if int(inp['name'].value()[3:]) > int(lastImgInput['name'].value()[3:]):
                     lastImgInput = inp
             
-        print 'last input name: %s' % ( lastImgInput['name'].value() )
-        print 'last input number: %s' % ( lastImgInputNumber )
+        print('last input name: %s' % ( lastImgInput['name'].value() ))
+        print('last input number: %s' % ( lastImgInputNumber ))
 
         prefs = nuke.toNode('preferences')
         gridWidth = prefs['GridWidth'].value()
@@ -71,18 +71,18 @@ def respondToInputChange(group):
         # add new input if we have run out
         if group.input(lastImgInputNumber) is not None:
             newInputName = str(int(lastImgInput['name'].value()[3:])+1)
-            print 'creating new input: img%s' % ( newInputName )
+            print('creating new input: img%s' % ( newInputName ))
             newInput = nuke.createNode('Input', inpanel = False)
             newInput['name'].setValue( 'img%s' % ( newInputName) )
             newInput['label'].setValue('input [value number]')
 
             newInput.setXpos( int( lastImgInput['xpos'].value() + gridWidth ))
             newInput.setYpos( int( lastImgInput['ypos'].value() ))
-            print 'created new input: img%s' % ( newInputName )
+            print('created new input: img%s' % ( newInputName ))
 
         # remove inputs if there are too many unconnected
         elif group.input(lastImgInputNumber-1) is None and lastImgInputNumber != 2:
-            print 'there are extra inputs we don\'t need, let\'s delete them'
+            print('there are extra inputs we don\'t need, let\'s delete them')
             indexOfNodesToDelete = []
             haveFoundLastConnectedImage = False
             while haveFoundLastConnectedImage is False:
@@ -93,15 +93,15 @@ def respondToInputChange(group):
                     if lastImgInputNumber == 1:
                         indexOfNodesToDelete.pop()
                     haveFoundLastConnectedImage = True
-            print 'input numbers of the inputs to delete: %s' % ( indexOfNodesToDelete )
+            print('input numbers of the inputs to delete: %s' % ( indexOfNodesToDelete ))
             for i in range (len(indexOfNodesToDelete) ):
                 nodeToDelete = nuke.toNode ( 'img%s' % (indexOfNodesToDelete[i]-1) )
-                print 'deleting input: %s' % ( nodeToDelete.name() )
+                print('deleting input: %s' % ( nodeToDelete.name() ))
                 nuke.delete ( nodeToDelete )
 
         # do nothing
         else:
-            print 'no change to inputs'
+            print('no change to inputs')
 
 def respondToKnobChange(knob,group):
     ''' disable and enable some knobs as needed '''
@@ -179,7 +179,7 @@ def setDefaultValues(group):
     Default values for the group so that right click
     and setting default values works
     '''
-    print 'Resetting to default values'
+    print('Resetting to default values')
     group['vertexStep'].setValue(1)
     group['startVertex'].setValue(0)
     group['useSelection'].setValue(False)
@@ -316,7 +316,7 @@ def imageInputList(group):
                 dot.setYpos(int(inp['ypos'].value()+gridHeight*10))
 
     switchInputs = sorted(switchInputs)
-    print 'valid image inputs: %s' % (switchInputs)
+    print('valid image inputs: %s' % (switchInputs))
     return switchInputs
 
 def saveSelectedVertices(group):
@@ -334,7 +334,7 @@ def saveSelectedVertices(group):
     pointsStr = pointsStr.replace('},{','}|{')
 
     # store the points in a hidden field
-    print 'Saving points: %s' % (pointsStr)
+    print('Saving points: %s' % (pointsStr))
     group['vertexStore'].setValue(pointsStr)
    
 def retrieveSavedVertices(group):
@@ -353,7 +353,7 @@ def retrieveSavedVertices(group):
            newPoint.append(float(item))
        newPointsList.append(newPoint)
 
-    print 'retrieved points: %s' % (newPointsList)
+    print('retrieved points: %s' % (newPointsList))
     return newPointsList
 
 def removePreviousScene(group):
@@ -370,7 +370,7 @@ def removePreviousScene(group):
         # keep the inputs
         for inp in nuke.allNodes('Input'):
             nodesToKeep.append(inp)
-        print 'keeping nodes: %s\n' % ( nodesToKeep )
+        print('keeping nodes: %s\n' % ( nodesToKeep ))
 
         # remove the previous scene
         nodesDeleted = []
@@ -379,7 +379,7 @@ def removePreviousScene(group):
             if n not in nodesToKeep:
                 nodesDeleted.append (n.name())
                 nuke.delete(n)
-        print 'deleted nodes: %s\n' % ( nodesDeleted )
+        print('deleted nodes: %s\n' % ( nodesDeleted ))
 
         # disconnect everything from the scene node
         scene = nuke.toNode('scene')
@@ -425,7 +425,7 @@ def makeCrowd(group):
         nuke.Layer( crowdRandomColorStr , [crowdRandomColorStr+'.red', crowdRandomColorStr+'.green', crowdRandomColorStr+'.blue'] )
 
         crowdIDStr = 'crowdID'
-        nuke.Layer( crowdIDStr, [crowdIDStr+'.id', crowdIDStr+.'sprite'] )
+        nuke.Layer( crowdIDStr, [crowdIDStr+'.id', crowdIDStr+'.sprite'] )
 
         '''
         crowdCharacterMaskStr = 'crowdCharacterMask'
@@ -693,7 +693,7 @@ def keepSceneAndRemoveCrowdGeneratingNodes(group):
         for n in nodesToDelete:
             nodesDeleted.append (n.name())
             nuke.delete(n)
-        print 'deleted nodes: %s\n' % ( nodesDeleted )
+        print('deleted nodes: %s\n' % ( nodesDeleted ))
 
 def remove_user_knobs(node):
     # https://www.mail-archive.com/nuke-python@support.thefoundry.co.uk/msg04880.html
@@ -784,7 +784,7 @@ def bakeSelectedNodes(group,nodes):
                 if len(n.dependent())>0:
                     n = n.dependent()[0]
                 else:
-                    print 'missing dependent:%s' % (n.name())
+                    print('missing dependent:%s' % (n.name()))
             transformGeoList.append(n)
 
         for n in set(transformGeoList):
